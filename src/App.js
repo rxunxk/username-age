@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useState } from "react";
+import UserForm from "./Components/Form/UserForm";
+import UserList from "./Components/List/UserList";
+import ModalDialog from "./Components/Form/ModalDialog";
+
+let message = "";
+let modalContent = "";
 
 function App() {
+  const [userDetails, setUser] = useState([]);
+  const [isValid, setValid] = useState(true);
+
+  function submitHandler(user, m) {
+    if (m === "") {
+      setUser((prevUserDetails) => {
+        return [...prevUserDetails, user];
+      });
+    } else {
+      message = m;
+      setValid(false);
+    }
+  }
+
+  function okayBtnHandlerInApp() {
+    setValid(true);
+  }
+
+  if (!isValid) {
+    modalContent = (
+      <ModalDialog
+        message={message}
+        okayBtn={okayBtnHandlerInApp}
+      ></ModalDialog>
+    );
+  } else {
+    modalContent = "";
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <UserForm onSubmitFn={submitHandler}></UserForm>
+      <UserList user={userDetails}></UserList>
+      {modalContent}
     </div>
   );
 }
